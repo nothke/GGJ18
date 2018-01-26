@@ -1,7 +1,10 @@
  - n number of tracked controllers
  - players share one screen
+ - players choose which channel they are trying to connect to
+ - successfull connection gives better channel audiovisual quality
  - every channel has one pose requirement per controller (more players, more poses)
 	pose: position, rotation
+ - controllers also rumble to indicate correct channel poses
  - every channel had unique number and audiovisual experience
  - channels loop to infinity
  - channels have hints to other channel poses and numbers
