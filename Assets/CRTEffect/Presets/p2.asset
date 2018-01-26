@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d2f0bbccd9434479006d2011197b7f, type: 3}
+  m_Name: p2
+  m_EditorClassIdentifier: 
+  YCurve:
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 0.17045161
+      value: 0.2164315
+      inSlope: 1.9682932
+      outSlope: 1.9682932
+      tangentMode: 0
+    - time: 0.2326457
+      value: 1.397478
+      inSlope: -0.5949028
+      outSlope: -0.5949028
+      tangentMode: 0
+    - time: 0.49379575
+      value: 0.5334753
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 0.83397955
+      value: 1.4405274
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  IQCurve:
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - time: 0.023656365
+      value: 18.529428
+      inSlope: -60.38368
+      outSlope: -60.38368
+      tangentMode: 0
+    - time: 0.1190137
+      value: -4.8318787
+      inSlope: 37.907364
+      outSlope: 37.907364
+      tangentMode: 0
+    - time: 0.2312498
+      value: -9.142327
+      inSlope: 1.463592
+      outSlope: 1.463592
+      tangentMode: 0
+    - time: 0.350507
+      value: 15.957754
+      inSlope: -1.7347932
+      outSlope: -1.7347932
+      tangentMode: 0
+    - time: 0.463423
+      value: 4.8320093
+      inSlope: -37.053905
+      outSlope: -37.053905
+      tangentMode: 0
+    - time: 0.63580906
+      value: -1.9499893
+      inSlope: 0.3027916
+      outSlope: 0.3027916
+      tangentMode: 0
+    - time: 1.1098022
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
