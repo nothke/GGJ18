@@ -9,3 +9,6 @@
  - channels loop to infinity
  - channels have hints to other channel poses and numbers
  - players browse the channels to reveal more story / fun stuff
+
+Wishlist:
+ - one controller is attached to the "tv" so a player can slap it to fix it

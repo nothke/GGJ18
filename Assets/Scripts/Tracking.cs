@@ -32,6 +32,8 @@ public class Tracking : MonoBehaviour
         public Quaternion rot;
     }
 
+    public TVParams tvParams;
+
     SteamVR_ControllerManager controllerManager;
     List<Transform> devices = new List<Transform>();
 
@@ -42,6 +44,11 @@ public class Tracking : MonoBehaviour
     Vector3 trackingOriginOffset;
 
     bool started = false;
+
+    int channelController = 0;
+    int currentChannel;
+
+    public AnimationCurve noiseCurve;
 
     void Start ()
     {
@@ -58,10 +65,10 @@ public class Tracking : MonoBehaviour
             {
                 SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
 
-                Debug.Log(devices[i].name);
+                //Debug.Log(devices[i].name);
                 if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                 {
-                    Debug.Log(SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x);
+                    //Debug.Log(SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x);
                     if (SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x > 0.8f)
                     {
                         CreateChannels(devices[i].position);
@@ -77,11 +84,61 @@ public class Tracking : MonoBehaviour
         }
         lastControllerAmount = controllerManager.transform.childCount;
 
+        // Find closest channel
+        int closestChannel = -1;
+        float closestDistance = 99999f;
         for(int i = 0; i < channels.Count; ++i)
         {
-            for (int j = 0; j < channels[i].poses.Length; ++j)
+            float dist = Vector3.Distance(channels[i].poses[0].pos, devices[channelController].position);
+            if (dist < closestDistance)
             {
-                Debug.DrawLine(channels[i].poses[j].pos, RotatePointAroundPivot(channels[i].poses[j].pos + Vector3.up * 0.1f, channels[i].poses[j].pos, channels[i].poses[j].rot.eulerAngles), channels[i].debugColor);
+                closestDistance = dist;
+                closestChannel = i;
+                currentChannel = closestChannel;
+            }
+        }
+        if (closestChannel != -1)
+        {
+            Debug.DrawLine(channels[closestChannel].poses[0].pos, devices[channelController].position, Color.green);
+        }
+
+        // Get noise for channel
+        if (closestChannel >= 0)
+        {
+            float[] channelNoises = new float[channels[closestChannel].poses.Length];
+            for (int i = 1; i < channels[closestChannel].poses.Length; ++i)
+            {
+                float closestPoseDist = 99999f;
+                int closestPoseDevice = -1;
+                for (int j = 1; j < devices.Count; ++j)
+                {
+                    float dist = Vector3.Distance(channels[closestChannel].poses[i].pos, devices[j].position);
+                    if (dist < closestPoseDist)
+                    {
+                        channelNoises[i] = dist;
+                        closestPoseDist = dist;
+                        closestPoseDevice = j;
+                    }
+                }
+                Debug.DrawLine(channels[closestChannel].poses[i].pos, devices[closestPoseDevice].position, Color.cyan);
+            }
+
+            for (int i = 1; i < channelNoises.Length; ++i)
+            {
+                float value = noiseCurve.Evaluate(channelNoises[i]);
+                tvParams.SetParameter(i-1, value);
+            }
+        }
+
+        // Draw debug for channel points
+        for (int i = 0; i < channels.Count; ++i)
+        {
+            if (i == currentChannel)
+            {
+                for (int j = 0; j < channels[i].poses.Length; ++j)
+                {
+                    Debug.DrawLine(channels[i].poses[j].pos, RotatePointAroundPivot(channels[i].poses[j].pos + Vector3.up * 0.1f, channels[i].poses[j].pos, channels[i].poses[j].rot.eulerAngles), channels[i].debugColor);
+                }
             }
         }
     }
@@ -90,12 +147,12 @@ public class Tracking : MonoBehaviour
     {
         trackingOriginOffset = newOrigin;
 
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 3; ++i)
         {
             Pose[] newPoses = new Pose[GetActiveChildCount(controllerManager.transform)];
             for (int j = 0; j < newPoses.Length; ++j)
             {
-                newPoses[i] = new Pose(Random.insideUnitSphere + Vector3.up * 0.5f + trackingOriginOffset, Random.rotation);
+                newPoses[j] = new Pose(Random.insideUnitSphere * 0.4f + Vector3.up * 0.44f + trackingOriginOffset, Random.rotation);
             }
 
             channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
@@ -107,7 +164,7 @@ public class Tracking : MonoBehaviour
         devices.Clear();
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 devices.Add(controllerManager.transform.GetChild(i));
             }
@@ -119,7 +176,7 @@ public class Tracking : MonoBehaviour
         int val = 0;
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 val++;
             }
