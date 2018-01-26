@@ -46,12 +46,15 @@ Shader "Hidden/Spots"
 			
 			sampler2D _MainTex;
 			float _NoiseThreshold;
+			float _SpotsSize;
 			float _Intensity;
+			float _ScrollPosition;
+			float _LinesThreshold;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 c = tex2D(_MainTex, i.uv);
-
+				fixed2 uv = fixed2(i.uv.x, (i.uv.y + _ScrollPosition) % 1);
+				fixed4 c = tex2D(_MainTex, uv);
 				
 				/*
 				fixed hLine = rand(round(rand(i.uv.y * _Time.z * 1) * 3 + i.uv.x * 20));
@@ -63,15 +66,37 @@ Shader "Hidden/Spots"
 				fixed4 whitenoise = min(hLine, round(-0.4 + rand(i.uv.y * _Time)));
 				whitenoise.a = 1;*/
 
-				fixed4 bigSpots = saturate(round(- 0.48  + noiseIQ(fixed3(i.uv.x * 10 + _Time.x * 500, i.uv.y * 30 + _Time.y * 800, 1))));
-				fixed4 noise2 = saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 200 + _Time.x * 5234, i.uv.y * 100 + _Time.y * 8123, 1)));
-				noise2 += saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 34.45 + _Time.x * 23.42, i.uv.y * 34.45 + _Time.y * 5654.342, 1)));
-				noise2 += saturate(-0.2 + noiseIQ(fixed3(i.uv.x * 150 + _Time.x * 23.42, i.uv.y * 150 + _Time.y * 5654.342, 1)));
+				float spotsThreshold = -0.5 + _SpotsSize * .5;
+
+				// Spots
+				fixed4 bigSpots = saturate(round(spotsThreshold + noiseIQ(fixed3(
+					(i.uv.x * 56.553 + _Time.x * 334.34),
+					(i.uv.y * 56.551 + _Time.y * 567.23), 1))));
+				bigSpots = saturate(bigSpots + round(spotsThreshold + noiseIQ(fixed3(
+					i.uv.x * 55.45 + rand(_Time.y) * 45 + _Time.x * 523,
+					i.uv.y * 55.45 + _Time.y * 45, 1))));
+				fixed4 bigSpots2 = -saturate(round(spotsThreshold + noiseIQ(fixed3(
+					i.uv.x * 10.324 + rand(_Time.y + i.uv.y * 0.002) * 10 + _Time.x * 34.3,
+					i.uv.y * 10.324 + _Time.y * 34.3, 1))));
+
+				// Lines
+				fixed lineWidth = 20.242341;
+				fixed linesThres = _LinesThreshold;
+				fixed linesMult = 3;
+				fixed lines = saturate(linesThres + ((noiseIQ(fixed3(i.uv.y * lineWidth, _Time.x * 34.2321, 0.234523)))) * linesMult);
+
+				//bigSpots *= lines;
+
+				// Snow
+				fixed4 snow = saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 200 + _Time.x * 5234, i.uv.y * 200 + _Time.y * 8123, 1)));
+				snow += saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 34.45 + _Time.x * 23.42, i.uv.y * 34.45 + _Time.y * 5654.342, 1)));
+				snow += saturate(-0.2 + noiseIQ(fixed3(i.uv.x * 150 + _Time.x * 23.42, i.uv.y * 150 + _Time.y * 5654.342, 1)));
+				//noise2 += saturate(rand(_Time.yzw));
 
 				//whitenoise *= lerp(fixed4(1, 1, 0, 1), fixed4(1, 0, 1, 1), rand(i.uv.x));
 
-				c += bigSpots;
-				return lerp(c, noise2, _Intensity);
+				c += bigSpots + bigSpots2;
+				return lerp(c, snow, _Intensity * lines);
 			}
 			ENDCG
 		}
