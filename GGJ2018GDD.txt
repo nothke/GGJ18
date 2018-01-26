@@ -1,0 +1,8 @@
+ - n number of tracked controllers
+ - players share one screen
+ - every channel has one pose requirement per controller (more players, more poses)
+	pose: position, rotation
+ - every channel had unique number and audiovisual experience
+ - channels loop to infinity
+ - channels have hints to other channel poses and numbers
+ - players browse the channels to reveal more story / fun stuff
