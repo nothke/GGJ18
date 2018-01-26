@@ -45,6 +45,8 @@ Shader "Hidden/Spots"
 			}
 			
 			sampler2D _MainTex;
+			float _NoiseThreshold;
+			float _Intensity;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -61,12 +63,15 @@ Shader "Hidden/Spots"
 				fixed4 whitenoise = min(hLine, round(-0.4 + rand(i.uv.y * _Time)));
 				whitenoise.a = 1;*/
 
-				fixed4 whitenoise = saturate(round(- 0.48  + noiseIQ(fixed3(i.uv.x * 10 + _Time.x * 500, i.uv.y * 30 + _Time.y * 800, 1))));
-				fixed4 noise2 = saturate(-0.90 + noiseIQ(fixed3(i.uv.x * 200 + _Time.x * 5234, i.uv.y * 100 + _Time.y * 8123, 1)));
+				fixed4 bigSpots = saturate(round(- 0.48  + noiseIQ(fixed3(i.uv.x * 10 + _Time.x * 500, i.uv.y * 30 + _Time.y * 800, 1))));
+				fixed4 noise2 = saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 200 + _Time.x * 5234, i.uv.y * 100 + _Time.y * 8123, 1)));
+				noise2 += saturate(-0.5 + noiseIQ(fixed3(i.uv.x * 34.45 + _Time.x * 23.42, i.uv.y * 34.45 + _Time.y * 5654.342, 1)));
+				noise2 += saturate(-0.2 + noiseIQ(fixed3(i.uv.x * 150 + _Time.x * 23.42, i.uv.y * 150 + _Time.y * 5654.342, 1)));
 
 				//whitenoise *= lerp(fixed4(1, 1, 0, 1), fixed4(1, 0, 1, 1), rand(i.uv.x));
 
-				return c + whitenoise + noise2;
+				c += bigSpots;
+				return lerp(c, noise2, _Intensity);
 			}
 			ENDCG
 		}

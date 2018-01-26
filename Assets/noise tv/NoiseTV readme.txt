@@ -1,0 +1,1 @@
+Use any image to use its colors in the noise shader. use a black and white to achieve b&w noise. tweak the shader for best effect
