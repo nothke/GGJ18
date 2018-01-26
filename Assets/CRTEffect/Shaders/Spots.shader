@@ -81,8 +81,9 @@ Shader "Hidden/Spots"
 
 				// Lines
 				fixed lineWidth = 20.242341;
-				fixed linesThres = _LinesThreshold;
+				
 				fixed linesMult = 3;
+				fixed linesThres = 0.5 - ((_LinesThreshold) * linesMult);
 				fixed lines = saturate(linesThres + ((noiseIQ(fixed3(i.uv.y * lineWidth, _Time.x * 34.2321, 0.234523)))) * linesMult);
 
 				//bigSpots *= lines;
@@ -95,7 +96,7 @@ Shader "Hidden/Spots"
 
 				//whitenoise *= lerp(fixed4(1, 1, 0, 1), fixed4(1, 0, 1, 1), rand(i.uv.x));
 
-				c += bigSpots + bigSpots2;
+				c += (bigSpots + bigSpots2) * 2;
 				return lerp(c, snow, _Intensity * lines);
 			}
 			ENDCG
