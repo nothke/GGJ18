@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -712,8 +712,8 @@ GameObject:
   - component: {fileID: 1212531823}
   - component: {fileID: 1212531822}
   - component: {fileID: 1212531821}
-  - component: {fileID: 1212531820}
   - component: {fileID: 1212531825}
+  - component: {fileID: 1212531820}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -811,8 +811,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f57005065b9b0942b00b71829d8c2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shader: {fileID: 0}
-  texture: {fileID: 10910, guid: 0000000000000000f000000000000000, type: 0}
+  shader: {fileID: 4800000, guid: d27b609e9fd0bb64e80cb4ad3f3cdcec, type: 3}
+  texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+  noiseThreshold: 1.04
+  intensity: 0.5
 --- !u!1 &1271140418
 GameObject:
   m_ObjectHideFlags: 0
