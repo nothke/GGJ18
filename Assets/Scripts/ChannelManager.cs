@@ -6,14 +6,14 @@ public class ChannelManager : MonoBehaviour
 {
     public static ChannelManager e;
 
+    public static Channel[] allChannels;
+
     public SpotsEffect spots;
 
+    [Header("Debugging only:")]
     public Channel channel1;
     public Channel channel2;
 
-    public static Channel[] allChannels;
-
-    [Header("Debugging only:")]
     public RenderTexture[] rts;
 
     int currentRt;
