@@ -58,7 +58,7 @@ public class Tracking : MonoBehaviour
 
     public Transform channelsParent;
 
-    public RectTransform connectionBar;
+    public GameObject[] connectionBar;
 
     void Start ()
     {
@@ -235,9 +235,14 @@ public class Tracking : MonoBehaviour
 
                 AudioManager.instance.distortion = avarage;
 
-                connectionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(200.0f, 0.0f, noiseCurve.Evaluate(avarage)));
+                float connectionAmount = noiseCurve.Evaluate(avarage);
+                connectionBar[0].SetActive(connectionAmount < 0.8f);
+                connectionBar[1].SetActive(connectionAmount < 0.6f);
+                connectionBar[2].SetActive(connectionAmount < 0.4f);
+                connectionBar[3].SetActive(connectionAmount < 0.2f);
+                connectionBar[4].SetActive(connectionAmount < 0.1f);
             }
-            
+
 
             // Draw debug for channel points
             for (int i = 0; i < channels.Count; ++i)
