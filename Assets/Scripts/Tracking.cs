@@ -61,6 +61,13 @@ public class Tracking : MonoBehaviour
         controllerManager = GetComponentInChildren<SteamVR_ControllerManager>();
         UpdateDeviceList();
         lastControllerAmount = controllerManager.transform.childCount;
+
+        for (int i = 1; i < 5; ++i)
+        {
+            float value = noiseCurve.Evaluate(0.0f);
+            tvParams.SetParameter(i - 1, value);
+            Debug.Log(i - 1 + ", " + value);
+        }
     }
 
     void Update()
@@ -185,9 +192,8 @@ public class Tracking : MonoBehaviour
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
                 tvParams.SetParameter(i - 1, value);
-                Debug.Log(value);
+                Debug.Log(i - 1 + ", " + value);
             }
-
 
             // Draw debug for channel points
             for (int i = 0; i < channels.Count; ++i)
@@ -220,7 +226,7 @@ public class Tracking : MonoBehaviour
         }
     }
 
-    void CreateChannels(Vector3 newOrigin)
+    void CreateRandomChannels(Vector3 newOrigin)
     {
         trackingOriginOffset = newOrigin;
 
