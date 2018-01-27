@@ -210,13 +210,8 @@ public class Tracking : MonoBehaviour
             Pose[] newPoses = new Pose[channelsParent.GetChild(i).childCount];
             for (int j = 0; j < newPoses.Length; ++j)
             {
-<<<<<<< HEAD
-                Transform channel = channelsParent.GetChild(i).transform;
-                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation, 99999f);
-=======
                 Transform channel = channelsParent.GetChild(i).GetChild(j).transform;
-                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation);
->>>>>>> 2fb9bb18ac6f1c5fde60647ce926b4603185168c
+                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation, 99999f);
             }
 
             channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
