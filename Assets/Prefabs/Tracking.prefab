@@ -4046,6 +4046,30 @@ MonoBehaviour:
   - {fileID: 1079017792849038}
   - {fileID: 1700772768129936}
   - {fileID: 1639761667730170}
+  hapticsCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0.041584156
+      outSlope: 0.041584156
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.4986929
+      value: 0.99837387
+      inSlope: -0.010635704
+      outSlope: -0.010635704
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 1
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114713819933635146
 MonoBehaviour:
   m_ObjectHideFlags: 1

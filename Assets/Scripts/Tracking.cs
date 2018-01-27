@@ -60,6 +60,9 @@ public class Tracking : MonoBehaviour
 
     public GameObject[] connectionBar;
 
+    public AnimationCurve hapticsCurve;
+    float hapticsVal = 0.0f;
+
     void Start ()
     {
         controllerManager = GetComponentInChildren<SteamVR_ControllerManager>();
@@ -215,12 +218,19 @@ public class Tracking : MonoBehaviour
                     }
                 }
             }
-            // sets shader parameters
+            // sets shader parameters and haptics
             for (int i = 1; i < deviceNoises.Length; ++i)
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
                 tvParams.SetParameter(i - 1, value);
-                Debug.Log(i - 1 + ", " + value);
+
+                hapticsVal += Time.deltaTime * value * 10.0f;
+                if(hapticsVal > 1.0f)
+                {
+                    hapticsVal -= 1.0f;
+                }
+
+                SteamVR_Controller.Input(i).TriggerHapticPulse((ushort)(1000.0f * value * hapticsCurve.Evaluate(hapticsVal)), EVRButtonId.k_EButton_SteamVR_Touchpad);
             }
 
             // Manage audio and UI
