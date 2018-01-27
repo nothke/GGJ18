@@ -44,7 +44,7 @@ Shader "Hidden/Spots"
 				return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
 			}
 			
-			sampler2D _MainTex; // Not actually used, just using render textures, for simplicity - not performance
+			sampler2D _MainTex; // Used for GUI rendering only
 			sampler2D _Tex1;
 			sampler2D _Tex2;
 			// Add more textures here..
@@ -59,16 +59,14 @@ Shader "Hidden/Spots"
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed2 uv = fixed2(i.uv.x, (i.uv.y + _ScrollPosition) % 1);
+				fixed4 cam = tex2D(_MainTex, i.uv);
 				fixed4 c = tex2D(_Tex1, uv);
 				fixed4 c2 = tex2D(_Tex2, uv);
 				
 				/*
 				fixed hLine = rand(round(rand(i.uv.y * _Time.z * 1) * 3 + i.uv.x * 20));
 				fixed hLine2 = round(-0.4 + rand(i.uv.x * _Time));
-				
-				
-				
-				
+
 				fixed4 whitenoise = min(hLine, round(-0.4 + rand(i.uv.y * _Time)));
 				whitenoise.a = 1;*/
 
@@ -104,7 +102,10 @@ Shader "Hidden/Spots"
 
 				c = lerp(c, c2, _ChannelBlend);
 				c += (bigSpots + bigSpots2) * 2;
-				return lerp(c, snow, _Intensity * lines);
+
+				fixed4 lerped = lerp(c, snow, _Intensity * lines);
+				return lerped + cam;
+				//return lerp(lerped, cam, cam.a); // not working??
 			}
 			ENDCG
 		}

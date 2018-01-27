@@ -32,7 +32,9 @@ public class Channel : MonoBehaviour
             videoPlayer.renderMode = VideoRenderMode.RenderTexture;
             videoPlayer.targetTexture = renderTexture;
 
-            audioSource.Play();
+            videoPlayer.Play();
+
+            //audioSource.Play();
 
             audioSource.enabled = false;
             StartCoroutine(Skip());
