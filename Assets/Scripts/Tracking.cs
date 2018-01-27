@@ -58,6 +58,8 @@ public class Tracking : MonoBehaviour
 
     public Transform channelsParent;
 
+    public RectTransform connectionBar;
+
     void Start ()
     {
         controllerManager = GetComponentInChildren<SteamVR_ControllerManager>();
@@ -131,6 +133,7 @@ public class Tracking : MonoBehaviour
             if(lastChannel != currentChannel)
             {
                 compitingChannel = lastChannel;
+                // Research this
                 ChannelManager.e.SwitchChannels(ChannelManager.allChannels[currentChannel], ChannelManager.allChannels[compitingChannel]);
             }
             lastChannel = currentChannel;
@@ -220,7 +223,7 @@ public class Tracking : MonoBehaviour
                 Debug.Log(i - 1 + ", " + value);
             }
 
-            // Manage audio
+            // Manage audio and UI
             if (AudioManager.instance != null)
             {
                 float avarage = 0.0f;
@@ -231,6 +234,8 @@ public class Tracking : MonoBehaviour
                 avarage = avarage / (deviceNoises.Length - 1);
 
                 AudioManager.instance.distortion = avarage;
+
+                connectionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(200.0f, 0.0f, noiseCurve.Evaluate(avarage)));
             }
             
 
@@ -283,6 +288,12 @@ public class Tracking : MonoBehaviour
 
     void UpdateDeviceList()
     {
+        for (int i = 1; i < 5; ++i)
+        {
+            float value = noiseCurve.Evaluate(0.0f);
+            tvParams.SetParameter(i - 1, value);
+        }
+
         devices.Clear();
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
