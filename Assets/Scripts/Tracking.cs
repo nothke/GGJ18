@@ -49,10 +49,12 @@ public class Tracking : MonoBehaviour
 
     int channelController = 0;
     int currentChannel;
-    int compitingChannel;
+    int compitingChannel = 0;
     float channelStrenght;
+    int lastChannel;
 
     public AnimationCurve noiseCurve;
+    public AnimationCurve channelBlendCurve;
 
     public Transform channelsParent;
 
@@ -66,7 +68,6 @@ public class Tracking : MonoBehaviour
         {
             float value = noiseCurve.Evaluate(0.0f);
             tvParams.SetParameter(i - 1, value);
-            Debug.Log(i - 1 + ", " + value);
         }
     }
 
@@ -98,23 +99,32 @@ public class Tracking : MonoBehaviour
 
         // Find closest channels
         currentChannel = -1;
-        compitingChannel = -1;
         float closestDistance = 99999f;
         for (int i = 0; i < channels.Count; ++i)
         {
             float dist = Vector3.Distance(channels[i].poses[0].pos, devices[channelController].position);
             if (dist < closestDistance)
             {
-                compitingChannel = currentChannel;
                 closestDistance = dist;
                 channelStrenght = dist;
                 currentChannel = i;
             }
         }
 
+        // Switch and blend closest channels
         if (currentChannel != -1)
-        {
+        {   
+            if(lastChannel != currentChannel)
+            {
+                // Switch channel 
+                compitingChannel = lastChannel;
+            }
+            lastChannel = currentChannel;
+
+            float blend = channelBlendCurve.Evaluate(channelStrenght);
+
             Debug.DrawLine(channels[currentChannel].poses[0].pos, devices[channelController].position, Color.green);
+            Debug.DrawLine(channels[compitingChannel].poses[0].pos, devices[channelController].position, Color.yellow);
         }
 
         // Update channel noise
@@ -220,7 +230,7 @@ public class Tracking : MonoBehaviour
                 newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation, 99999f);
             }
 
-            channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
+            channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.9f, 1.0f, 0.45f, 0.55f)));
         }
     }
 
