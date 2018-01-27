@@ -8,7 +8,7 @@ public class ChannelManager : MonoBehaviour
 
     public static Channel[] allChannels;
 
-    public SpotsEffect spots;
+    SpotsEffect spots;
 
     [Header("Debugging only:")]
     public Channel channel1;
@@ -24,6 +24,8 @@ public class ChannelManager : MonoBehaviour
 
         // Find all channels in scene
         allChannels = FindObjectsOfType<Channel>();
+
+        spots = FindObjectOfType<SpotsEffect>();
 
         // Init render textures
         rts = new RenderTexture[2];
