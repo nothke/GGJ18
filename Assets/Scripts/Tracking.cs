@@ -69,10 +69,27 @@ public class Tracking : MonoBehaviour
             float value = noiseCurve.Evaluate(0.0f);
             tvParams.SetParameter(i - 1, value);
         }
+
+        // TODO: Show tutorial channel
     }
 
     void Update()
     {
+        // Device hot plugging support
+        if (GetActiveChildCount(controllerManager.transform) != lastControllerAmount)
+        {
+            UpdateDeviceList();
+        }
+        lastControllerAmount = controllerManager.transform.childCount;
+
+        // If no devices are connected or dashboard is open, wait for new devices
+        if (devices.Count <= 0)
+        {
+            Debug.LogWarning("No devices!");
+            return;
+        }
+
+        // Wait until user presses trigger to start
         if (!started)
         {
             for (int i = 0; i < devices.Count; ++i)
@@ -81,21 +98,18 @@ public class Tracking : MonoBehaviour
 
                 if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                 {
+                    Debug.Log(SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x);
                     if (SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x > 0.8f)
                     {
                         GetChannels(devices[i].position);
-                        //CreateChannels(devices[i].position);
                         started = true;
                     }
                 }
             }
-        }
 
-        if (GetActiveChildCount(controllerManager.transform) != lastControllerAmount)
-        {
-            UpdateDeviceList();
+            // Only run main code once we have started
+            return;
         }
-        lastControllerAmount = controllerManager.transform.childCount;
 
         // Find closest channels
         currentChannel = -1;
@@ -248,7 +262,7 @@ public class Tracking : MonoBehaviour
                 newPoses[j] = new Pose(Random.insideUnitSphere * 0.4f + Vector3.up * 0.44f + trackingOriginOffset, Random.rotation, 99999f);
             }
 
-            channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
+            channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.9f, 1.0f, 0.45f, 0.55f)));
         }
     }
 
