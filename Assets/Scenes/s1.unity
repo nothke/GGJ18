@@ -1259,7 +1259,7 @@ MonoBehaviour:
   crtDistance: 0
   spotsSize: 0
   testParameters: []
-  test: 1
+  test: 0
 --- !u!1 &1271140418
 GameObject:
   m_ObjectHideFlags: 0
