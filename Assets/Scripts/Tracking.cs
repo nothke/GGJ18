@@ -164,10 +164,10 @@ public class Tracking : MonoBehaviour
 
         for (int i = 0; i < channelsParent.childCount; ++i)
         {
-            Pose[] newPoses = new Pose[GetActiveChildCount(controllerManager.transform)];
+            Pose[] newPoses = new Pose[channelsParent.GetChild(i).childCount];
             for (int j = 0; j < newPoses.Length; ++j)
             {
-                Transform channel = channelsParent.GetChild(i).transform;
+                Transform channel = channelsParent.GetChild(i).GetChild(j).transform;
                 newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation);
             }
 
