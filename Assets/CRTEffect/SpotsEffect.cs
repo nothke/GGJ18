@@ -18,8 +18,24 @@ public class SpotsEffect : EffectBase
 
     float scrollPosition;
 
+    public RenderTexture tex1;
+    public RenderTexture tex2;
+
+    [Range(0, 1)]
+    public float textureBlend;
+
+    /*
+    private void Update()
+    {
+        textureBlend += Input.GetAxis("Horizontal") * 0.1f;
+    }*/
+
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        material.SetTexture("_Tex1", tex1);
+        material.SetTexture("_Tex2", tex2);
+
+        material.SetFloat("_ChannelBlend", textureBlend);
         //material.SetTexture("_MainTexture", texture);
         material.SetFloat("_NoiseThreshold", noiseThreshold);
         material.SetFloat("_Intensity", intensity);
