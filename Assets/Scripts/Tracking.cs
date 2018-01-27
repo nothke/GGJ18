@@ -219,6 +219,20 @@ public class Tracking : MonoBehaviour
                 Debug.Log(i - 1 + ", " + value);
             }
 
+            // Manage audio
+            if (AudioManager.instance != null)
+            {
+                float avarage = 0.0f;
+                for (int i = 1; i < deviceNoises.Length; ++i)
+                {
+                    avarage += deviceNoises[i];
+                }
+                avarage = avarage / (deviceNoises.Length - 1);
+
+                AudioManager.instance.distortion = avarage;
+            }
+            
+
             // Draw debug for channel points
             for (int i = 0; i < channels.Count; ++i)
             {
