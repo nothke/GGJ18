@@ -47,8 +47,12 @@ public class Tracking : MonoBehaviour
 
     int channelController = 0;
     int currentChannel;
+    int compitingChannel;
+    float channelStrenght;
 
     public AnimationCurve noiseCurve;
+
+    public Transform channelsParent;
 
     void Start ()
     {
@@ -65,13 +69,12 @@ public class Tracking : MonoBehaviour
             {
                 SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
 
-                //Debug.Log(devices[i].name);
                 if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                 {
-                    //Debug.Log(SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x);
                     if (SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x > 0.8f)
                     {
-                        CreateChannels(devices[i].position);
+                        GetChannels(devices[i].position);
+                        //CreateChannels(devices[i].position);
                         started = true;
                     }
                 }
@@ -84,62 +87,91 @@ public class Tracking : MonoBehaviour
         }
         lastControllerAmount = controllerManager.transform.childCount;
 
-        // Find closest channel
-        int closestChannel = -1;
+        // Find closest channels
+        currentChannel = -1;
+        compitingChannel = -1;
         float closestDistance = 99999f;
         for(int i = 0; i < channels.Count; ++i)
         {
             float dist = Vector3.Distance(channels[i].poses[0].pos, devices[channelController].position);
             if (dist < closestDistance)
             {
+                compitingChannel = currentChannel;
                 closestDistance = dist;
-                closestChannel = i;
-                currentChannel = closestChannel;
+                channelStrenght = dist;
+                currentChannel = i;
             }
         }
-        if (closestChannel != -1)
+
+        if (currentChannel != -1)
         {
-            Debug.DrawLine(channels[closestChannel].poses[0].pos, devices[channelController].position, Color.green);
+            Debug.DrawLine(channels[currentChannel].poses[0].pos, devices[channelController].position, Color.green);
         }
 
-        // Get noise for channel
-        if (closestChannel >= 0)
+        // Update channel noise
+        if (currentChannel >= 0)
         {
-            float[] channelNoises = new float[channels[closestChannel].poses.Length];
-            for (int i = 1; i < channels[closestChannel].poses.Length; ++i)
+            List<int> reservedPoses = new List<int>();
+            float[] deviceNoises = new float[devices.Count];
+            for (int j = 1; j < devices.Count; ++j)
             {
                 float closestPoseDist = 99999f;
                 int closestPoseDevice = -1;
-                for (int j = 1; j < devices.Count; ++j)
+                int closestPose = -1;
+                for (int i = 1; i < devices.Count; ++i)
                 {
-                    float dist = Vector3.Distance(channels[closestChannel].poses[i].pos, devices[j].position);
-                    if (dist < closestPoseDist)
+                    if (!reservedPoses.Contains(i))
                     {
-                        channelNoises[i] = dist;
-                        closestPoseDist = dist;
-                        closestPoseDevice = j;
+                        float dist = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[j].position);
+                        if (dist < closestPoseDist)
+                        {
+                            deviceNoises[i] = dist;
+                            closestPoseDist = dist;
+                            closestPoseDevice = j;
+                            closestPose = i;
+                        }
                     }
                 }
-                Debug.DrawLine(channels[closestChannel].poses[i].pos, devices[closestPoseDevice].position, Color.cyan);
+
+                reservedPoses.Add(closestPose);
+                Debug.DrawLine(channels[currentChannel].poses[closestPose].pos, devices[closestPoseDevice].position, Color.cyan);
             }
 
-            for (int i = 1; i < channelNoises.Length; ++i)
+            for (int i = 1; i < deviceNoises.Length; ++i)
             {
-                float value = noiseCurve.Evaluate(channelNoises[i]);
+                float value = noiseCurve.Evaluate(deviceNoises[i]);
                 tvParams.SetParameter(i-1, value);
+                Debug.Log(value);
             }
         }
 
         // Draw debug for channel points
         for (int i = 0; i < channels.Count; ++i)
         {
-            if (i == currentChannel)
+            if (i == this.currentChannel)
             {
-                for (int j = 0; j < channels[i].poses.Length; ++j)
+                for (int j = 0; j < devices.Count; ++j)
                 {
                     Debug.DrawLine(channels[i].poses[j].pos, RotatePointAroundPivot(channels[i].poses[j].pos + Vector3.up * 0.1f, channels[i].poses[j].pos, channels[i].poses[j].rot.eulerAngles), channels[i].debugColor);
                 }
             }
+        }
+    }
+
+    void GetChannels(Vector3 newOrigin)
+    {
+        trackingOriginOffset = newOrigin;
+
+        for (int i = 0; i < channelsParent.childCount; ++i)
+        {
+            Pose[] newPoses = new Pose[GetActiveChildCount(controllerManager.transform)];
+            for (int j = 0; j < newPoses.Length; ++j)
+            {
+                Transform channel = channelsParent.GetChild(i).transform;
+                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation);
+            }
+
+            channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
         }
     }
 
