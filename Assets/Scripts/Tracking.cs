@@ -63,7 +63,10 @@ public class Tracking : MonoBehaviour
 
     public Transform channelsParent;
 
-    public RectTransform connectionBar;
+    public GameObject[] connectionBar;
+
+    public AnimationCurve hapticsCurve;
+    float hapticsVal = 0.0f;
 
     void Start ()
     {
@@ -156,11 +159,14 @@ public class Tracking : MonoBehaviour
         if (currentChannel >= 0)
         {
 
+
             float[] deviceNoises = new float[devices.Count];
+
             globalMinDist = 999f;
             bestPairing = new List<int>();
 
             recCompMin(new List<int>());
+
 
             //bestPairing.ForEach(dBug);
             for (int i = 1; i < devices.Count; ++i) {
@@ -172,12 +178,19 @@ public class Tracking : MonoBehaviour
                 deviceNoises[i] = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[bestPairing[i - 1]].position);
             }
              
-            // sets shader parameters
+            // sets shader parameters and haptics
             for (int i = 1; i < deviceNoises.Length; ++i)
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
                 tvParams.SetParameter(i - 1, value);
-                //Debug.Log(i - 1 + ", " + value);
+
+                hapticsVal += Time.deltaTime * value * 10.0f;
+                if(hapticsVal > 1.0f)
+                {
+                    hapticsVal -= 1.0f;
+                }
+
+                SteamVR_Controller.Input(i).TriggerHapticPulse((ushort)(1000.0f * value * hapticsCurve.Evaluate(hapticsVal)), EVRButtonId.k_EButton_SteamVR_Touchpad);
             }
 
             // Manage audio and UI
@@ -192,9 +205,14 @@ public class Tracking : MonoBehaviour
 
                 AudioManager.instance.distortion = avarage;
 
-                connectionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(200.0f, 0.0f, noiseCurve.Evaluate(avarage)));
+				float connectionAmount = noiseCurve.Evaluate(avarage);
+                connectionBar[0].SetActive(connectionAmount < 0.8f);
+                connectionBar[1].SetActive(connectionAmount < 0.6f);
+                connectionBar[2].SetActive(connectionAmount < 0.4f);
+                connectionBar[3].SetActive(connectionAmount < 0.2f);
+                connectionBar[4].SetActive(connectionAmount < 0.1f);
             }
-            
+
 
             // Draw debug for channel points
             for (int i = 0; i < channels.Count; ++i)
