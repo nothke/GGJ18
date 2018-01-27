@@ -143,6 +143,7 @@ public class Tracking : MonoBehaviour
                             closestPoseDist = dist;
                             closestPoseDevice = j;
                             closestPose = i;
+                            channels[currentChannel].poses[i].pairedContDist = dist;
                         }
                     }
                 }
@@ -173,6 +174,7 @@ public class Tracking : MonoBehaviour
                                 closestPoseDist = dist;
                                 closestPoseDevice = j;
                                 closestPose = i;
+                                channels[currentChannel].poses[i].pairedContDist = dist;
                             }
                         }
                     }
