@@ -36,6 +36,11 @@ public class Tracking : MonoBehaviour
 
     public TVParams tvParams;
 
+
+    float globalMinDist = 999f;
+    List<int> bestPairing = new List<int>();
+
+
     SteamVR_ControllerManager controllerManager;
     List<Transform> devices = new List<Transform>();
 
@@ -150,77 +155,29 @@ public class Tracking : MonoBehaviour
         //pairs controllers with poses         
         if (currentChannel >= 0)
         {
-            List<int> reservedPoses = new List<int>();
+
             float[] deviceNoises = new float[devices.Count];
-            bool changed = false;
+            globalMinDist = 999f;
+            bestPairing = new List<int>();
 
-            for (int j = 1; j < devices.Count; ++j)
-            {
-                for (int i = 1; i < devices.Count; i++)
-                {
-                    channels[currentChannel].poses[i].pairedContDist = 99999f;
-                }
-                float closestPoseDist = 99999f;
-                int closestPoseDevice = -1;
-                int closestPose = -1;
-                for (int i = 1; i < devices.Count; ++i)
-                {
-                    if (!reservedPoses.Contains(i))
-                    {
-                        float dist = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[j].position);
-                        if (dist < closestPoseDist && dist < channels[currentChannel].poses[i].pairedContDist)
-                        {
-                            if (channels[currentChannel].poses[i].pairedContDist != 99999f)
-                            {
-                                changed = true;
-                            }
-                            deviceNoises[i] = dist;
-                            closestPoseDist = dist;
-                            closestPoseDevice = j;
-                            closestPose = i;
-                            channels[currentChannel].poses[i].pairedContDist = dist;
-                        }
-                    }
-                }
+            recCompMin(new List<int>());
 
-                reservedPoses.Add(closestPose);
-                Debug.DrawLine(channels[currentChannel].poses[closestPose].pos, devices[closestPoseDevice].position, Color.cyan);
+            //bestPairing.ForEach(dBug);
+            for (int i = 1; i < devices.Count; ++i) {
+                //reservedPoses.Add(i);
+                //Debug.Log(i.ToString());
+                //Debug.Log(bestPairing.Count.ToString());
+                //Debug.Log(globalMinDist.ToString());
+                Debug.DrawLine(channels[currentChannel].poses[i].pos,devices[bestPairing[i-1]].position, Color.cyan);
+                deviceNoises[i] = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[bestPairing[i - 1]].position);
             }
-            while (changed)
-            {
-                changed = false;
-                for (int j = 1; j < devices.Count; ++j)
-                {
-                    float closestPoseDist = 99999f;
-                    int closestPoseDevice = -1;
-                    int closestPose = -1;
-                    for (int i = 1; i < devices.Count; ++i)
-                    {
-                        if (!reservedPoses.Contains(i))
-                        {
-                            float dist = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[j].position);
-                            if (dist < closestPoseDist && dist < channels[currentChannel].poses[i].pairedContDist)
-                            {
-                                if (channels[currentChannel].poses[i].pairedContDist != 99999f)
-                                {
-                                    changed = true;
-                                }
-                                deviceNoises[i] = dist;
-                                closestPoseDist = dist;
-                                closestPoseDevice = j;
-                                closestPose = i;
-                                channels[currentChannel].poses[i].pairedContDist = dist;
-                            }
-                        }
-                    }
-                }
-            }
+             
             // sets shader parameters
             for (int i = 1; i < deviceNoises.Length; ++i)
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
                 tvParams.SetParameter(i - 1, value);
-                Debug.Log(i - 1 + ", " + value);
+                //Debug.Log(i - 1 + ", " + value);
             }
 
             // Manage audio and UI
@@ -252,6 +209,48 @@ public class Tracking : MonoBehaviour
             }
         }
     }
+
+    void dBug(int thing)
+    {
+        Debug.Log(thing);
+    }
+
+    //recursive compound minimum distance of n points
+
+    void recCompMin(List<int> used)
+    {
+        if (used.Count == devices.Count-1)
+        {
+            //check min length and do it
+            float temp = 0f;
+            for (int i = 1; i < devices.Count; i++)
+            {
+                temp += Vector3.Distance(channels[currentChannel].poses[i].pos, devices[used[i-1]].position);
+            }
+            if (temp < globalMinDist)
+            {
+                globalMinDist = temp;
+                bestPairing = new List<int>();
+                used.ForEach(addToBest);
+            }
+            return;
+        }
+        for (int i = 1; i < devices.Count; i++)
+        {
+            if (!used.Contains(i))
+            {
+                used.Add(i);
+                recCompMin(used);
+                used.RemoveAt(used.Count - 1);
+            }
+
+        }
+    }
+    void addToBest(int x)
+    {
+        bestPairing.Add(x);
+    }
+
 
     void GetChannels(Vector3 newOrigin)
     {
@@ -297,7 +296,7 @@ public class Tracking : MonoBehaviour
         devices.Clear();
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 devices.Add(controllerManager.transform.GetChild(i));
             }
@@ -309,7 +308,7 @@ public class Tracking : MonoBehaviour
         int val = 0;
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 val++;
             }
