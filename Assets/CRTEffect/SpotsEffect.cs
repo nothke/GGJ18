@@ -24,6 +24,21 @@ public class SpotsEffect : EffectBase
     [Range(0, 1)]
     public float textureBlend;
 
+    public Camera uiCamera;
+    public RenderTexture uiRT;
+
+    private void Awake()
+    {
+        CreateUIRenderTexture();
+    }
+
+    void CreateUIRenderTexture()
+    {
+        uiRT = new RenderTexture(Screen.width, Screen.height, 24);
+        uiCamera.targetTexture = uiRT; // Is this VR camera with vive??
+        material.SetTexture("_UITex", uiRT);
+    }
+
     /*
     private void Update()
     {
@@ -36,7 +51,6 @@ public class SpotsEffect : EffectBase
         material.SetTexture("_Tex2", tex2);
 
         material.SetFloat("_ChannelBlend", textureBlend);
-        //material.SetTexture("_MainTexture", texture);
         material.SetFloat("_NoiseThreshold", noiseThreshold);
         material.SetFloat("_Intensity", intensity);
         material.SetFloat("_SpotsSize", spotsSize);

@@ -14,7 +14,7 @@ public class ChannelDebugger : MonoBehaviour
 
     float vert;
     float scroll;
-
+    
     private void Start()
     {
         ChannelManager.e.SwitchChannels(testChannel, testChannel2);
@@ -40,5 +40,7 @@ public class ChannelDebugger : MonoBehaviour
 
         tvParams.SetParameter(2, scroll);
         tvParams.SetParameter(0, vert);
+        tvParams.SetParameter(1, Input.mousePosition.x / Screen.width);
+        tvParams.SetParameter(3, Input.mousePosition.y / Screen.height);
     }
 }

@@ -47,6 +47,7 @@ Shader "Hidden/Spots"
 			sampler2D _MainTex; // Used for GUI rendering only
 			sampler2D _Tex1;
 			sampler2D _Tex2;
+			sampler2D _UITex;
 			// Add more textures here..
 
 			float _NoiseThreshold;
@@ -58,10 +59,16 @@ Shader "Hidden/Spots"
 
 			fixed4 frag (v2f i) : SV_Target
 			{
+				// scrolled uv
 				fixed2 uv = fixed2(i.uv.x, (i.uv.y + _ScrollPosition) % 1);
-				fixed4 cam = tex2D(_MainTex, i.uv);
-				fixed4 c = tex2D(_Tex1, uv);
-				fixed4 c2 = tex2D(_Tex2, uv);
+				
+				// samplers
+				fixed4 cam = tex2D(_MainTex, i.uv); // previous frame
+
+				fixed4 c = tex2D(_Tex1, uv); // tex1
+				fixed4 c2 = tex2D(_Tex2, uv); // tex2
+
+				fixed4 cUI = tex2D(_UITex, i.uv); // ui tex
 				
 				/*
 				fixed hLine = rand(round(rand(i.uv.y * _Time.z * 1) * 3 + i.uv.x * 20));
@@ -83,7 +90,7 @@ Shader "Hidden/Spots"
 					i.uv.x * 10.324 + rand(_Time.y + i.uv.y * 0.002) * 10 + _Time.x * 34.3,
 					i.uv.y * 10.324 + _Time.y * 34.3, 1))));
 
-				// Lines
+				// Bands
 				fixed lineWidth = 20.242341;
 				
 				fixed linesMult = 3;
@@ -100,12 +107,15 @@ Shader "Hidden/Spots"
 
 				//whitenoise *= lerp(fixed4(1, 1, 0, 1), fixed4(1, 0, 1, 1), rand(i.uv.x));
 
+				// Combine all
 				c = lerp(c, c2, _ChannelBlend);
 				c += (bigSpots + bigSpots2) * 2;
 
 				fixed4 lerped = lerp(c, snow, _Intensity * lines);
-				return lerped + cam;
-				//return lerp(lerped, cam, cam.a); // not working??
+				//lerped = lerped + cam * 0; // Not really workingggg
+				lerped = lerp(lerped, cUI, cUI.a);
+				return lerped;
+				//return lerped + cam * 0.1;
 			}
 			ENDCG
 		}
