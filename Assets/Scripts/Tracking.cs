@@ -22,14 +22,16 @@ public class Tracking : MonoBehaviour
 
     struct Pose
     {
-        public Pose(Vector3 p, Quaternion r)
+        public Pose(Vector3 p, Quaternion r,float pCD)
         {
             pos = p;
             rot = r;
+            pairedContDist = pCD; 
         }
 
         public Vector3 pos;
         public Quaternion rot;
+        public float pairedContDist;
     }
 
     public TVParams tvParams;
@@ -61,11 +63,11 @@ public class Tracking : MonoBehaviour
         lastControllerAmount = controllerManager.transform.childCount;
     }
 
-	void Update ()
+    void Update()
     {
-        if(!started)
+        if (!started)
         {
-            for(int i = 0; i < devices.Count; ++i)
+            for (int i = 0; i < devices.Count; ++i)
             {
                 SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
 
@@ -81,7 +83,7 @@ public class Tracking : MonoBehaviour
             }
         }
 
-       if(GetActiveChildCount(controllerManager.transform) != lastControllerAmount)
+        if (GetActiveChildCount(controllerManager.transform) != lastControllerAmount)
         {
             UpdateDeviceList();
         }
@@ -91,7 +93,7 @@ public class Tracking : MonoBehaviour
         currentChannel = -1;
         compitingChannel = -1;
         float closestDistance = 99999f;
-        for(int i = 0; i < channels.Count; ++i)
+        for (int i = 0; i < channels.Count; ++i)
         {
             float dist = Vector3.Distance(channels[i].poses[0].pos, devices[channelController].position);
             if (dist < closestDistance)
@@ -109,12 +111,20 @@ public class Tracking : MonoBehaviour
         }
 
         // Update channel noise
+
+        //pairs controllers with poses         
         if (currentChannel >= 0)
         {
             List<int> reservedPoses = new List<int>();
             float[] deviceNoises = new float[devices.Count];
+            bool changed = false;
+
             for (int j = 1; j < devices.Count; ++j)
             {
+                for (int i = 1; i < devices.Count; i++)
+                {
+                    channels[currentChannel].poses[i].pairedContDist = 99999f;
+                }
                 float closestPoseDist = 99999f;
                 int closestPoseDevice = -1;
                 int closestPose = -1;
@@ -123,8 +133,12 @@ public class Tracking : MonoBehaviour
                     if (!reservedPoses.Contains(i))
                     {
                         float dist = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[j].position);
-                        if (dist < closestPoseDist)
+                        if (dist < closestPoseDist && dist < channels[currentChannel].poses[i].pairedContDist)
                         {
+                            if (channels[currentChannel].poses[i].pairedContDist != 99999f)
+                            {
+                                changed = true;
+                            }
                             deviceNoises[i] = dist;
                             closestPoseDist = dist;
                             closestPoseDevice = j;
@@ -136,23 +150,52 @@ public class Tracking : MonoBehaviour
                 reservedPoses.Add(closestPose);
                 Debug.DrawLine(channels[currentChannel].poses[closestPose].pos, devices[closestPoseDevice].position, Color.cyan);
             }
-
+            while (changed)
+            {
+                changed = false;
+                for (int j = 1; j < devices.Count; ++j)
+                {
+                    float closestPoseDist = 99999f;
+                    int closestPoseDevice = -1;
+                    int closestPose = -1;
+                    for (int i = 1; i < devices.Count; ++i)
+                    {
+                        if (!reservedPoses.Contains(i))
+                        {
+                            float dist = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[j].position);
+                            if (dist < closestPoseDist && dist < channels[currentChannel].poses[i].pairedContDist)
+                            {
+                                if (channels[currentChannel].poses[i].pairedContDist != 99999f)
+                                {
+                                    changed = true;
+                                }
+                                deviceNoises[i] = dist;
+                                closestPoseDist = dist;
+                                closestPoseDevice = j;
+                                closestPose = i;
+                            }
+                        }
+                    }
+                }
+            }
+            // sets shader parameters
             for (int i = 1; i < deviceNoises.Length; ++i)
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
-                tvParams.SetParameter(i-1, value);
+                tvParams.SetParameter(i - 1, value);
                 Debug.Log(value);
             }
-        }
 
-        // Draw debug for channel points
-        for (int i = 0; i < channels.Count; ++i)
-        {
-            if (i == this.currentChannel)
+
+            // Draw debug for channel points
+            for (int i = 0; i < channels.Count; ++i)
             {
-                for (int j = 0; j < devices.Count; ++j)
+                if (i == this.currentChannel)
                 {
-                    Debug.DrawLine(channels[i].poses[j].pos, RotatePointAroundPivot(channels[i].poses[j].pos + Vector3.up * 0.1f, channels[i].poses[j].pos, channels[i].poses[j].rot.eulerAngles), channels[i].debugColor);
+                    for (int j = 0; j < devices.Count; ++j)
+                    {
+                        Debug.DrawLine(channels[i].poses[j].pos, RotatePointAroundPivot(channels[i].poses[j].pos + Vector3.up * 0.1f, channels[i].poses[j].pos, channels[i].poses[j].rot.eulerAngles), channels[i].debugColor);
+                    }
                 }
             }
         }
@@ -168,7 +211,7 @@ public class Tracking : MonoBehaviour
             for (int j = 0; j < newPoses.Length; ++j)
             {
                 Transform channel = channelsParent.GetChild(i).transform;
-                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation);
+                newPoses[j] = new Pose(channel.position + trackingOriginOffset, channel.rotation, 99999f);
             }
 
             channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
@@ -184,7 +227,7 @@ public class Tracking : MonoBehaviour
             Pose[] newPoses = new Pose[GetActiveChildCount(controllerManager.transform)];
             for (int j = 0; j < newPoses.Length; ++j)
             {
-                newPoses[j] = new Pose(Random.insideUnitSphere * 0.4f + Vector3.up * 0.44f + trackingOriginOffset, Random.rotation);
+                newPoses[j] = new Pose(Random.insideUnitSphere * 0.4f + Vector3.up * 0.44f + trackingOriginOffset, Random.rotation, 99999f);
             }
 
             channels.Add(new Channel(i, newPoses, Random.ColorHSV(0.0f, 1.0f, 0.6f, 1.0f, 0.3f, 0.6f)));
