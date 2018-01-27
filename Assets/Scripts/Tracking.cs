@@ -130,14 +130,15 @@ public class Tracking : MonoBehaviour
         {   
             if(lastChannel != currentChannel)
             {
-                // Switch channel 
                 compitingChannel = lastChannel;
+                ChannelManager.e.SwitchChannels(ChannelManager.allChannels[currentChannel], ChannelManager.allChannels[compitingChannel]);
             }
             lastChannel = currentChannel;
 
             float blend = channelBlendCurve.Evaluate(channelStrenght);
+            ChannelManager.e.SetChannelBlendValue(blend);
 
-            Debug.DrawLine(channels[currentChannel].poses[0].pos, devices[channelController].position, Color.green);
+           Debug.DrawLine(channels[currentChannel].poses[0].pos, devices[channelController].position, Color.green);
             Debug.DrawLine(channels[compitingChannel].poses[0].pos, devices[channelController].position, Color.yellow);
         }
 
