@@ -41,28 +41,36 @@ public class ChannelManager : MonoBehaviour
         {
             rts[i] = new RenderTexture(Screen.width, Screen.height, 24);
         }
+
+        spots.tex1 = rts[0];
+        spots.tex2 = rts[1];
     }
 
     public void SwitchChannels(Channel primaryChannel, Channel secondaryChannel)
     {
         // Pause previous channels
-        if (channel1)
-            channel1.videoPlayer.Pause(); // Move to method in channel
-        if (channel2)
-            channel2.videoPlayer.Pause();
+        if (channel1) channel1.Disable();
+        if (channel2) channel2.Disable();
 
-        // assign new
         channel1 = primaryChannel;
         channel2 = secondaryChannel;
-        
+
+        // Skip a frame and play new channel videos
+        StartCoroutine(SkipEnable());
+    }
+
+    IEnumerator SkipEnable()
+    {
+        yield return null;
+
         channel1.SetOutput(rts[0]);
         channel2.SetOutput(rts[1]);
 
         // We don't need to change this every time right? (not sure)
         //if (spots.tex1 == null || spots.tex2 == null)
         //{
-            spots.tex1 = rts[0];
-            spots.tex2 = rts[1];
+        //spots.tex1 = rts[0];
+        //spots.tex2 = rts[1];
         //}
     }
 
@@ -72,7 +80,7 @@ public class ChannelManager : MonoBehaviour
 
         spots.textureBlend = blend;
 
-        channel1.audioSource.volume = 1 - blend;
-        channel2.audioSource.volume = blend;
+        channel1.audioSource.volume = Mathf.Clamp(1 - blend, 0.001f, 1);
+        channel2.audioSource.volume = Mathf.Clamp(blend, 0.001f, 1);
     }
 }

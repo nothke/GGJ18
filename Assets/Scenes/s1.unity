@@ -169,7 +169,7 @@ VideoPlayer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 19553348}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 09da755cb67046e4abcdc6117025aff5, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: bab319ceb627b5840bc2db1cc4ec14a1, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 1212531823}
@@ -184,12 +184,14 @@ VideoPlayer:
   m_AudioOutputMode: 1
   m_TargetAudioSources:
   - {fileID: 1759146544}
+  - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
+  m_EnabledAudioTracks: 0101
+  m_DirectAudioMutes: 0000
+  m_ControlledAudioTrackCount: 2
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
   m_Looping: 1
@@ -350,12 +352,14 @@ VideoPlayer:
   m_AudioOutputMode: 1
   m_TargetAudioSources:
   - {fileID: 1784596408}
+  - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
+  m_EnabledAudioTracks: 0101
+  m_DirectAudioMutes: 0000
+  m_ControlledAudioTrackCount: 2
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
   m_Looping: 1
@@ -704,12 +708,14 @@ VideoPlayer:
   m_AudioOutputMode: 1
   m_TargetAudioSources:
   - {fileID: 1130940772}
+  - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
+  m_EnabledAudioTracks: 0101
+  m_DirectAudioMutes: 0000
+  m_ControlledAudioTrackCount: 2
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
   m_Looping: 1
@@ -1372,6 +1378,12 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1200478690 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114309508909698932, guid: e2ac3875f74e8974da2a6f6c34bd2b62,
+    type: 2}
+  m_PrefabInternal: {fileID: 1685392223}
+  m_Script: {fileID: 11500000, guid: 005822ae27f76a242810c17805f97b11, type: 3}
 --- !u!1 &1212531819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1806,12 +1818,12 @@ Prefab:
         type: 2}
       propertyPath: testChannel2
       value: 
-      objectReference: {fileID: 19553350}
+      objectReference: {fileID: 754061116}
     - target: {fileID: 114431172585761264, guid: e2ac3875f74e8974da2a6f6c34bd2b62,
         type: 2}
       propertyPath: testChannel
       value: 
-      objectReference: {fileID: 145550496}
+      objectReference: {fileID: 1200478690}
     - target: {fileID: 328935902374386598, guid: e2ac3875f74e8974da2a6f6c34bd2b62,
         type: 2}
       propertyPath: m_WaitForFirstFrame

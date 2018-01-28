@@ -14,7 +14,7 @@ public class ChannelDebugger : MonoBehaviour
 
     float vert;
     float scroll;
-    
+
     private void Start()
     {
         ChannelManager.e.SwitchChannels(testChannel, testChannel2);
@@ -23,7 +23,8 @@ public class ChannelDebugger : MonoBehaviour
 
     private void Update()
     {
-        input += Mathf.Clamp(Input.GetAxis("Horizontal") * 0.02f, -1, 2);
+        input += Input.GetAxis("Horizontal") * 0.02f;
+        input = Mathf.Clamp(input, 0, 1);
 
         ChannelManager.e.SetChannelBlendValue(input);
 
