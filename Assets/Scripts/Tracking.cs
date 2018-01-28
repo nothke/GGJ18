@@ -59,6 +59,7 @@ public class Tracking : MonoBehaviour
     int lastChannel;
 
     public AnimationCurve noiseCurve;
+    public AnimationCurve rotationNoiseCurve;
     public AnimationCurve channelBlendCurve;
 
     public Transform channelsParent;
@@ -108,7 +109,6 @@ public class Tracking : MonoBehaviour
 
                 if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                 {
-                    Debug.Log(SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x);
                     if (SteamVR_Controller.Input((int)device.index).GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger).x > 0.8f)
                     {
                         GetChannels(devices[i].position);
@@ -161,6 +161,7 @@ public class Tracking : MonoBehaviour
 
 
             float[] deviceNoises = new float[devices.Count];
+            float[] deviceRotationNoises = new float[devices.Count];
 
             globalMinDist = 999f;
             bestPairing = new List<int>();
@@ -176,41 +177,65 @@ public class Tracking : MonoBehaviour
                 //Debug.Log(globalMinDist.ToString());
                 Debug.DrawLine(channels[currentChannel].poses[i].pos,devices[bestPairing[i-1]].position, Color.cyan);
                 deviceNoises[i] = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[bestPairing[i - 1]].position);
+                deviceRotationNoises[i] = Quaternion.Angle(channels[currentChannel].poses[i].rot, devices[bestPairing[i - 1]].rotation) / 180.0f;
+                Debug.Log("Rot " + deviceRotationNoises[i]);
             }
-             
+
+
             // sets shader parameters and haptics
+            for (int i = 1; i < 5; ++i)
+            {
+                tvParams.SetParameter(i - 1, 0.0f);
+            }
+
             for (int i = 1; i < deviceNoises.Length; ++i)
             {
                 float value = noiseCurve.Evaluate(deviceNoises[i]);
+                value += rotationNoiseCurve.Evaluate(deviceRotationNoises[i]);
+
+                Debug.Log(value);
+
                 tvParams.SetParameter(i - 1, value);
 
                 hapticsVal += Time.deltaTime * value * 10.0f;
-                if(hapticsVal > 1.0f)
+                if (hapticsVal > 1.0f)
                 {
                     hapticsVal -= 1.0f;
-                }
 
-                SteamVR_Controller.Input(i).TriggerHapticPulse((ushort)(1000.0f * value * hapticsCurve.Evaluate(hapticsVal)), EVRButtonId.k_EButton_SteamVR_Touchpad);
+                    ushort hapticsAmount = (ushort)(1800.0f * (1.0f - value));
+                    SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
+                    if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
+                    {
+                        SteamVR_Controller.Input((int)device.index).TriggerHapticPulse(hapticsAmount, EVRButtonId.k_EButton_SteamVR_Touchpad);
+                    }
+                }
+                
             }
 
             // Manage audio and UI
             if (AudioManager.instance != null)
             {
                 float avarage = 0.0f;
+                float avarageRot = 0.0f;
                 for (int i = 1; i < deviceNoises.Length; ++i)
                 {
                     avarage += deviceNoises[i];
+                    avarageRot += deviceRotationNoises[i];
                 }
+
                 avarage = avarage / (deviceNoises.Length - 1);
+                avarageRot = avarageRot / (deviceNoises.Length - 1);
+                avarage = Mathf.Clamp01(avarage);
+                avarageRot = Mathf.Clamp01(avarageRot);
 
-                AudioManager.instance.distortion = avarage;
-
-				float connectionAmount = noiseCurve.Evaluate(avarage);
+                float connectionAmount = noiseCurve.Evaluate(avarage) + rotationNoiseCurve.Evaluate(avarageRot);
                 connectionBar[0].SetActive(connectionAmount < 0.8f);
                 connectionBar[1].SetActive(connectionAmount < 0.6f);
                 connectionBar[2].SetActive(connectionAmount < 0.4f);
                 connectionBar[3].SetActive(connectionAmount < 0.2f);
                 connectionBar[4].SetActive(connectionAmount < 0.1f);
+
+                //AudioManager.instance.distortion = connectionAmount;
             }
 
 
@@ -314,7 +339,7 @@ public class Tracking : MonoBehaviour
         devices.Clear();
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 devices.Add(controllerManager.transform.GetChild(i));
             }
@@ -326,7 +351,7 @@ public class Tracking : MonoBehaviour
         int val = 0;
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 val++;
             }

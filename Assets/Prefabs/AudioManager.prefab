@@ -63,14 +63,14 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.19166717
-      value: 0.8625031
+      time: 0.5
+      value: 0.80189705
       inSlope: -0.05343366
       outSlope: -0.05343366
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.4987347
-      value: 0.9905595
+      time: 0.8
+      value: 0.92995346
       inSlope: 0.015221467
       outSlope: 0.015221467
       tangentMode: 0

@@ -72,7 +72,10 @@ public class ChannelManager : MonoBehaviour
 
         spots.textureBlend = blend;
 
-        channel1.audioSource.volume = 1 - blend;
-        channel2.audioSource.volume = blend;
+        if (channel1 != null)
+        {
+            channel1.audioSource.volume = 1 - blend;
+            channel2.audioSource.volume = blend;
+        }
     }
 }

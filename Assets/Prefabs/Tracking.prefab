@@ -1970,8 +1970,8 @@ Camera:
   far clip plane: 1
   field of view: 60
   orthographic: 1
-  orthographic size: 1
-  m_Depth: 0
+  orthographic size: 0
+  m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 0
@@ -4042,28 +4042,58 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
-      value: 0
+      time: -0.0065827966
+      value: 0.0010899752
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.09993042
-      value: 0.00012790784
-      inSlope: 0.09117918
-      outSlope: 0.09117918
+      time: 0.1
+      value: -0.000011458993
+      inSlope: 0.014644176
+      outSlope: 0.014644176
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.7
-      value: 0.9999999
-      inSlope: -0.009421135
-      outSlope: -0.009421135
+      time: 0.4
+      value: 0.7998507
+      inSlope: 0.052554287
+      outSlope: 0.052554287
       tangentMode: 0
     - serializedVersion: 2
       time: 1
-      value: 1
-      inSlope: 0.04838728
-      outSlope: 0.04838728
+      value: 0.79846203
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  rotationNoiseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.0065827966
+      value: 0.0010899752
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5
+      value: 0.0011820346
+      inSlope: 0.014644176
+      outSlope: 0.014644176
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.90000004
+      value: 0.18947044
+      inSlope: 0.052554287
+      outSlope: 0.052554287
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0.19477904
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -4431,7 +4461,7 @@ Canvas:
   m_GameObject: {fileID: 1898551587407110}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
