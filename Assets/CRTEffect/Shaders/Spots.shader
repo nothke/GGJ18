@@ -59,6 +59,8 @@ Shader "Hidden/Spots"
 
 			float _Squash;
 
+			float _Contrast;
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scrolled uv
@@ -115,6 +117,9 @@ Shader "Hidden/Spots"
 
 				fixed4 lerped = lerp(c, snow, _Intensity * lines);
 				//lerped = lerped + cam * 0; // Not really workingggg
+
+				lerped = ((lerped - 0.5f) * max(_Contrast, 0)) + 0.5f;
+
 				lerped = lerp(lerped, cUI, cUI.a);
 				return lerped;
 				//return lerped + cam * 0.1;

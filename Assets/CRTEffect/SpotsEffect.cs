@@ -28,7 +28,7 @@ public class SpotsEffect : EffectBase
     public Camera uiCamera;
     public RenderTexture uiRT;
 
-    
+    public float contrast = 1;
 
     private void Awake()
     {
@@ -54,6 +54,7 @@ public class SpotsEffect : EffectBase
         material.SetTexture("_Tex2", tex2);
 
         material.SetFloat("_Squash", squash);
+        
 
         material.SetFloat("_ChannelBlend", textureBlend);
         material.SetFloat("_NoiseThreshold", noiseThreshold);
@@ -62,6 +63,7 @@ public class SpotsEffect : EffectBase
         scrollPosition += Time.deltaTime * scrollSpeed;
         material.SetFloat("_ScrollPosition", scrollPosition);
         material.SetFloat("_LinesThreshold", linesThreshold);
+        material.SetFloat("_Contrast", contrast);
 
         Graphics.Blit(source, destination, material);
     }
