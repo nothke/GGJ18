@@ -19,6 +19,12 @@ public class Channel : MonoBehaviour
         audioSource.volume = 0.0001f;
     }
 
+    public void Disable()
+    {
+        //videoPlayer.Pause();
+        videoPlayer.enabled = false;
+    }
+
     public void SetOutput(RenderTexture renderTexture)
     {
         rt = renderTexture as RenderTexture;
@@ -28,23 +34,18 @@ public class Channel : MonoBehaviour
 
         if (videoPlayer)
         {
+            videoPlayer.enabled = true;
             // Make sure it's set to texture mode
             videoPlayer.renderMode = VideoRenderMode.RenderTexture;
             videoPlayer.targetTexture = renderTexture;
 
+            float time = Time.time % (float)videoPlayer.clip.length;
+
+            
             videoPlayer.Play();
+            videoPlayer.time = time;
 
-            //audioSource.Play();
-
-            audioSource.enabled = false;
             StartCoroutine(Skip());
-
-            // Old
-            //source = audioSource;
-            //videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
-            //videoPlayer.EnableAudioTrack(0, true);
-            //videoPlayer.SetTargetAudioSource(0, audioSource);
-            //source.Play();
         }
         Debug.Log("Texture set for " + name);
     }
@@ -52,21 +53,7 @@ public class Channel : MonoBehaviour
     IEnumerator Skip()
     {
         yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
 
-        audioSource.enabled = true;
-        audioSource.Play();
+        //audioSource.enabled = true;
     }
 }
