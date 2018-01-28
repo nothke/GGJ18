@@ -207,8 +207,6 @@ public class Tracking : MonoBehaviour
 
                     SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
 
-                    Debug.Log(device.index.ToString() + ": " + hapticsAmount);
-
                     if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                     {
                         SteamVR_Controller.Input((int)device.index).TriggerHapticPulse(hapticsAmount, EVRButtonId.k_EButton_SteamVR_Touchpad);
@@ -349,7 +347,7 @@ public class Tracking : MonoBehaviour
         devices.Clear();
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 devices.Add(controllerManager.transform.GetChild(i));
             }
@@ -361,7 +359,7 @@ public class Tracking : MonoBehaviour
         int val = 0;
         for (int i = 0; i < controllerManager.transform.childCount; ++i)
         {
-            if (controllerManager.transform.GetChild(i).gameObject.activeSelf && controllerManager.transform.GetChild(i).tag != "MainCamera")
+            if (controllerManager.transform.GetChild(i).gameObject.activeSelf)// && controllerManager.transform.GetChild(i).tag != "MainCamera")
             {
                 val++;
             }
