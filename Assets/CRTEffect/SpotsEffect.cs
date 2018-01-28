@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpotsEffect : EffectBase
 {
     public float squash = 1;
+    public float uiSquash = 1;
 
     public Texture2D texture;
     public float noiseThreshold;
@@ -54,7 +55,7 @@ public class SpotsEffect : EffectBase
         material.SetTexture("_Tex2", tex2);
 
         material.SetFloat("_Squash", squash);
-        
+        material.SetFloat("_UISquash", uiSquash);
 
         material.SetFloat("_ChannelBlend", textureBlend);
         material.SetFloat("_NoiseThreshold", noiseThreshold);

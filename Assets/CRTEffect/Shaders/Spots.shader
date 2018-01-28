@@ -58,6 +58,7 @@ Shader "Hidden/Spots"
 			float _ChannelBlend;
 
 			float _Squash;
+			float _UISquash;
 
 			float _Contrast;
 
@@ -72,7 +73,7 @@ Shader "Hidden/Spots"
 				fixed4 c = tex2D(_Tex1, uv); // tex1
 				fixed4 c2 = tex2D(_Tex2, uv); // tex2
 
-				fixed4 cUI = tex2D(_UITex, i.uv); // ui tex
+				fixed4 cUI = tex2D(_UITex, fixed2(i.uv.x, i.uv.y + _UISquash)); // ui tex
 				
 				/*
 				fixed hLine = rand(round(rand(i.uv.y * _Time.z * 1) * 3 + i.uv.x * 20));
