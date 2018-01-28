@@ -82,7 +82,8 @@ public class ChannelManager : MonoBehaviour
 
         if (channel1 != null)
         {
-            channel1.audioSource.volume = Mathf.Clamp(1 - blend, 0.001f, 1)
+            channel1.audioSource.volume = Mathf.Clamp(1 - blend, 0.001f, 1);
             channel2.audioSource.volume = Mathf.Clamp(blend, 0.001f, 1);
-        }    }
+        }
+    }
 }
