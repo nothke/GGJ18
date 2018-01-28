@@ -177,15 +177,14 @@ public class Tracking : MonoBehaviour
                 //Debug.Log(i.ToString());
                 //Debug.Log(bestPairing.Count.ToString());
                 //Debug.Log(globalMinDist.ToString());
-                Debug.DrawLine(channels[currentChannel].poses[i].pos,devices[bestPairing[i-1]].position, Color.cyan);
-                deviceNoises[i] = Vector3.Distance(channels[currentChannel].poses[i].pos, devices[bestPairing[i - 1]].position);
-                deviceRotationNoises[i] = Quaternion.Angle(channels[currentChannel].poses[i].rot, devices[bestPairing[i - 1]].rotation) / 180.0f;
-                Debug.Log("Rot " + deviceRotationNoises[i]);
+                Debug.DrawLine(channels[currentChannel].poses[i].pos, devices[bestPairing[i-1]].position, Color.cyan);
+                deviceNoises[i] = Vector3.Distance(channels[currentChannel].poses[bestPairing[i - 1]].pos, devices[i].position);
+                deviceRotationNoises[i] = Quaternion.Angle(channels[currentChannel].poses[bestPairing[i - 1]].rot, devices[i].rotation) / 180.0f;
             }
 
 
             // sets shader parameters and haptics
-            for (int i = 1; i < 5; ++i)
+            for (int i = 1; i < 6; ++i)
             {
                 tvParams.SetParameter(i - 1, 0.0f);
             }
@@ -199,13 +198,17 @@ public class Tracking : MonoBehaviour
 
                 tvParams.SetParameter(i - 1, value);
 
-                hapticsVal += Time.deltaTime * value * 10.0f;
-                if (hapticsVal > 1.0f)
+                hapticsVal += Time.deltaTime * 10.0f;
+                //if (hapticsVal > 1.0f)
                 {
                     hapticsVal -= 1.0f;
 
-                    ushort hapticsAmount = (ushort)(1800.0f * (1.0f - value));
+                    ushort hapticsAmount = (ushort)(1800.0f * hapticsCurve.Evaluate(noiseCurve.Evaluate(deviceNoises[i])));
+
                     SteamVR_TrackedObject device = devices[i].GetComponent<SteamVR_TrackedObject>();
+
+                    Debug.Log(device.index.ToString() + ": " + hapticsAmount);
+
                     if (device != null && device.index != SteamVR_TrackedObject.EIndex.Hmd)
                     {
                         SteamVR_Controller.Input((int)device.index).TriggerHapticPulse(hapticsAmount, EVRButtonId.k_EButton_SteamVR_Touchpad);
@@ -231,11 +234,16 @@ public class Tracking : MonoBehaviour
                 avarageRot = Mathf.Clamp01(avarageRot);
 
                 float connectionAmount = noiseCurve.Evaluate(avarage) + rotationNoiseCurve.Evaluate(avarageRot);
-                connectionBar[0].SetActive(connectionAmount < 0.8f);
-                connectionBar[1].SetActive(connectionAmount < 0.6f);
-                connectionBar[2].SetActive(connectionAmount < 0.4f);
-                connectionBar[3].SetActive(connectionAmount < 0.2f);
-                connectionBar[4].SetActive(connectionAmount < 0.1f);
+                connectionBar[0].SetActive(connectionAmount < 0.9f);
+                connectionBar[1].SetActive(connectionAmount < 0.8f);
+                connectionBar[2].SetActive(connectionAmount < 0.7f);
+                connectionBar[3].SetActive(connectionAmount < 0.6f);
+                connectionBar[4].SetActive(connectionAmount < 0.5f);
+                connectionBar[5].SetActive(connectionAmount < 0.4f);
+                connectionBar[6].SetActive(connectionAmount < 0.3f);
+                connectionBar[7].SetActive(connectionAmount < 0.2f);
+                connectionBar[8].SetActive(connectionAmount < 0.1f);
+                connectionBar[9].SetActive(connectionAmount < 0.05f);
 
                 AudioManager.instance.distortion = connectionAmount;
             }
