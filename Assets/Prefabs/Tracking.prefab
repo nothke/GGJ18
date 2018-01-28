@@ -499,7 +499,7 @@ GameObject:
   - component: {fileID: 114713819933635146}
   m_Layer: 0
   m_Name: Camera (eye)
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -701,7 +701,7 @@ GameObject:
   - component: {fileID: 92305184893269480}
   m_Layer: 0
   m_Name: Camera (head)
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2034,7 +2034,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -2070,7 +2070,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0
@@ -4289,14 +4289,14 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.1
+      time: 0.3
       value: -0.000011458993
       inSlope: 0.014644176
       outSlope: 0.014644176
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.6
-      value: 0.7971426
+      time: 0.8
+      value: 0.79983103
       inSlope: 0.052554287
       outSlope: 0.052554287
       tangentMode: 0
@@ -4319,8 +4319,8 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.5
-      value: 0.0011820346
+      time: 0.60510254
+      value: 0.0024942905
       inSlope: 0.014644176
       outSlope: 0.014644176
       tangentMode: 0
@@ -4349,8 +4349,8 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.2
-      value: 0.0076785535
+      time: 0.30905455
+      value: 0.00432162
       inSlope: 0.023305321
       outSlope: 0.023305321
       tangentMode: 0
