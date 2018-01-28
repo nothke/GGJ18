@@ -57,10 +57,12 @@ Shader "Hidden/Spots"
 			float _LinesThreshold;
 			float _ChannelBlend;
 
+			float _Squash;
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// scrolled uv
-				fixed2 uv = fixed2(i.uv.x, (i.uv.y + _ScrollPosition) % 1);
+				fixed2 uv = fixed2(i.uv.x, (i.uv.y + _ScrollPosition) * _Squash % 1);
 				
 				// samplers
 				fixed4 cam = tex2D(_MainTex, i.uv); // previous frame
