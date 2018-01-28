@@ -23,6 +23,6 @@ public class AudioManager : MonoBehaviour
 	void Update ()
     {
         mixer.SetFloat("Distortion", distortionCurve.Evaluate(distortion));
-        mixer.SetFloat("CuttoffFreq", Mathf.Lerp(22000.00f, 22.0f, distortion));
+        mixer.SetFloat("CuttoffFreq", Mathf.Lerp(11000.00f, 22.0f, distortion));
     }
 }

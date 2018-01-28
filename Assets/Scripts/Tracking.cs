@@ -81,6 +81,8 @@ public class Tracking : MonoBehaviour
             tvParams.SetParameter(i - 1, value);
         }
 
+        ChannelManager.e.SwitchChannels(ChannelManager.allChannels[0], ChannelManager.allChannels[1]);
+
         // TODO: Show tutorial channel
     }
 
@@ -235,7 +237,7 @@ public class Tracking : MonoBehaviour
                 connectionBar[3].SetActive(connectionAmount < 0.2f);
                 connectionBar[4].SetActive(connectionAmount < 0.1f);
 
-                //AudioManager.instance.distortion = connectionAmount;
+                AudioManager.instance.distortion = connectionAmount;
             }
 
 
