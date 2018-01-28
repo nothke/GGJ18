@@ -19,6 +19,22 @@ public class Channel : MonoBehaviour
         audioSource.volume = 0.0001f;
     }
 
+    private void OnEnable()
+    {
+        videoPlayer.prepareCompleted += Prepared;
+    }
+
+    private void OnDisable()
+    {
+        videoPlayer.prepareCompleted -= Prepared;
+    }
+
+    void Prepared(VideoPlayer source)
+    {
+        double time = Time.time % videoPlayer.clip.length;
+        source.time = time;
+    }
+
     public void Disable()
     {
         //videoPlayer.Pause();
@@ -41,7 +57,6 @@ public class Channel : MonoBehaviour
 
             float time = Time.time % (float)videoPlayer.clip.length;
 
-            
             videoPlayer.Play();
             videoPlayer.time = time;
 
