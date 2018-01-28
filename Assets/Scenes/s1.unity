@@ -1132,6 +1132,7 @@ MonoBehaviour:
   textureBlend: 0
   uiCamera: {fileID: 678063949}
   uiRT: {fileID: 0}
+  contrast: 1
 --- !u!114 &1212531826
 MonoBehaviour:
   m_ObjectHideFlags: 0

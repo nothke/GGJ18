@@ -36,6 +36,7 @@ public class TVParams : MonoBehaviour
             case 1: crtEffect.distance = Mathf.Lerp(0.01f, 0.6f, parameter); break;
             case 2: spotsEffect.linesThreshold = 1 - parameter; break;
             case 3: spotsEffect.spotsSize = parameter; break;
+            case 4: spotsEffect.contrast = 1 + parameter; break;
             default: Debug.Log("YOu have more controllers than parameters"); break;
         }
     }
